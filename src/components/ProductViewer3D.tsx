@@ -1,13 +1,48 @@
 import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment, ContactShadows } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Environment, ContactShadows, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface Product3DProps {
   color: string;
+  modelPath?: string;
 }
 
-const Product3D = ({ color }: Product3DProps) => {
+const CustomModel = ({ modelPath, color }: { modelPath: string; color: string }) => {
+  const groupRef = useRef<THREE.Group>(null);
+  const [hovered, setHovered] = useState(false);
+  const { scene } = useGLTF(modelPath);
+
+  useFrame(() => {
+    if (groupRef.current && !hovered) {
+      groupRef.current.rotation.y += 0.003;
+    }
+  });
+
+  // Apply color to all meshes in the loaded model
+  scene.traverse((child) => {
+    if ((child as THREE.Mesh).isMesh) {
+      const mesh = child as THREE.Mesh;
+      if (mesh.material) {
+        const material = mesh.material as THREE.MeshStandardMaterial;
+        material.color = new THREE.Color(color);
+        material.needsUpdate = true;
+      }
+    }
+  });
+
+  return (
+    <group
+      ref={groupRef}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+    >
+      <primitive object={scene.clone()} />
+    </group>
+  );
+};
+
+const Product3D = ({ color, modelPath }: Product3DProps) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
@@ -17,6 +52,12 @@ const Product3D = ({ color }: Product3DProps) => {
     }
   });
 
+  // If a custom model is provided, use it
+  if (modelPath) {
+    return <CustomModel modelPath={modelPath} color={color} />;
+  }
+
+  // Default geometry-based model
   return (
     <group>
       {/* Main Product - Sneaker-like shape */}
@@ -88,7 +129,7 @@ const Product3D = ({ color }: Product3DProps) => {
   );
 };
 
-export const ProductViewer3D = ({ color }: { color: string }) => {
+export const ProductViewer3D = ({ color, modelPath }: { color: string; modelPath?: string }) => {
   return (
     <div className="w-full h-full">
       <Canvas shadows>
@@ -112,7 +153,7 @@ export const ProductViewer3D = ({ color }: { color: string }) => {
         <Environment preset="city" />
         
         {/* Product */}
-        <Product3D color={color} />
+        <Product3D color={color} modelPath={modelPath} />
         
         {/* Shadows */}
         <ContactShadows

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ProductViewer3D } from '@/components/ProductViewer3D';
 import { ColorPicker } from '@/components/ColorPicker';
+import { ModelUploader } from '@/components/ModelUploader';
 import { Particles } from '@/components/Particles';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +15,12 @@ const ProductDetail = () => {
   const product = products.find(p => p.id === id);
 
   const [selectedColor, setSelectedColor] = useState(product?.defaultColor || '#a855f7');
+  const [customModelUrl, setCustomModelUrl] = useState<string | undefined>(product?.modelPath);
+
+  const handleModelUpload = (file: File) => {
+    const url = URL.createObjectURL(file);
+    setCustomModelUrl(url);
+  };
 
   if (!product) {
     return (
@@ -63,7 +70,7 @@ const ProductDetail = () => {
                 background: 'radial-gradient(circle at 50% 50%, hsl(var(--card)) 0%, hsl(var(--background)) 100%)'
               }}
             >
-              <ProductViewer3D color={selectedColor} />
+              <ProductViewer3D color={selectedColor} modelPath={customModelUrl} />
               
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-panel px-4 py-2 rounded-full text-sm text-muted-foreground animate-float">
                 Drag to rotate • Scroll to zoom
@@ -75,6 +82,8 @@ const ProductDetail = () => {
               onColorChange={setSelectedColor}
               colors={product.colors}
             />
+
+            <ModelUploader onModelUpload={handleModelUpload} />
           </div>
 
           {/* Right Side - Product Info */}

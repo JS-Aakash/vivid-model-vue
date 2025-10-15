@@ -1,8 +1,27 @@
+import { useState, useMemo } from 'react';
 import { Particles } from '@/components/Particles';
 import { ProductCard } from '@/components/ProductCard';
+import { CategoryFilter } from '@/components/CategoryFilter';
+import { SearchBar } from '@/components/SearchBar';
 import { products } from '@/data/products';
 
 const Index = () => {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const categories = useMemo(() => {
+    return Array.from(new Set(products.map(p => p.category)));
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+      const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          product.tagline.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [selectedCategory, searchQuery]);
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       <Particles />
@@ -16,19 +35,35 @@ const Index = () => {
         {/* Header */}
         <header className="mb-12 text-center animate-fade-in">
           <h1 className="text-5xl md:text-7xl font-bold text-gradient mb-4">
-            Premium Footwear
+            3D Product Store
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
             Explore our collection in stunning 3D. Click any product to customize and view in detail.
           </p>
+          
+          {/* Search Bar */}
+          <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
         </header>
 
+        {/* Category Filter */}
+        <CategoryFilter
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {filteredProducts.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16 glass-panel rounded-2xl mb-16">
+            <p className="text-xl text-muted-foreground">No products found matching your search.</p>
+          </div>
+        )}
 
         {/* Features Section */}
         <div className="glass-panel rounded-2xl p-8 animate-fade-in">
