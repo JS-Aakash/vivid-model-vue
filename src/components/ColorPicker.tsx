@@ -19,9 +19,14 @@ const colorOptions: ColorOption[] = [
 interface ColorPickerProps {
   selectedColor: string;
   onColorChange: (color: string) => void;
+  colors?: string[];
 }
 
-export const ColorPicker = ({ selectedColor, onColorChange }: ColorPickerProps) => {
+export const ColorPicker = ({ selectedColor, onColorChange, colors }: ColorPickerProps) => {
+  const displayColors: ColorOption[] = colors
+    ? colors.map(color => ({ name: color, value: color }))
+    : colorOptions;
+
   return (
     <div className="glass-panel rounded-2xl p-6 space-y-4 animate-fade-in">
       <div>
@@ -30,7 +35,7 @@ export const ColorPicker = ({ selectedColor, onColorChange }: ColorPickerProps) 
       </div>
       
       <div className="grid grid-cols-3 gap-3">
-        {colorOptions.map((option) => (
+        {displayColors.map((option) => (
           <button
             key={option.value}
             onClick={() => onColorChange(option.value)}
@@ -66,7 +71,7 @@ export const ColorPicker = ({ selectedColor, onColorChange }: ColorPickerProps) 
         <Button 
           variant="outline" 
           className="w-full group relative overflow-hidden"
-          onClick={() => onColorChange(colorOptions[0].value)}
+          onClick={() => onColorChange(displayColors[0].value)}
         >
           <span className="relative z-10">Reset to Default</span>
           <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity" />
