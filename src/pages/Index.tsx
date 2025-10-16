@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Header } from '@/components/Header';
 import { Particles } from '@/components/Particles';
 import { ProductCard } from '@/components/ProductCard';
 import { CategoryFilter } from '@/components/CategoryFilter';
@@ -30,6 +31,8 @@ const Index = () => {
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[100px] animate-pulse" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
+
+      <Header />
 
       <div className="relative z-10 container mx-auto px-4 py-8 min-h-screen">
         {/* Header */}

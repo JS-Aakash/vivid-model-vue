@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Header } from '@/components/Header';
 import { ProductViewer3D } from '@/components/ProductViewer3D';
 import { ColorPicker } from '@/components/ColorPicker';
 import { ModelUploader } from '@/components/ModelUploader';
@@ -8,11 +9,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingCart, Heart, Share2, ArrowLeft } from 'lucide-react';
 import { products } from '@/data/products';
+import { useCart } from '@/hooks/useCart';
+import { useWishlist } from '@/hooks/useWishlist';
+import { toast } from 'sonner';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const product = products.find(p => p.id === id);
+  const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const [selectedColor, setSelectedColor] = useState(product?.defaultColor || '#a855f7');
   const [customModelUrl, setCustomModelUrl] = useState<string | undefined>(product?.modelPath);
@@ -33,6 +39,37 @@ const ProductDetail = () => {
     );
   }
 
+  const isWishlisted = product ? isInWishlist(product.id) : false;
+
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart(product.id, selectedColor);
+    }
+  };
+
+  const handleWishlistToggle = () => {
+    if (product) {
+      if (isWishlisted) {
+        removeFromWishlist(product.id);
+      } else {
+        addToWishlist(product.id);
+      }
+    }
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: product?.name,
+        text: product?.tagline,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success('Link copied to clipboard!');
+    }
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       <Particles />
@@ -42,23 +79,17 @@ const ProductDetail = () => {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
 
+      <Header />
+
       <div className="relative z-10 container mx-auto px-4 py-8 min-h-screen">
-        {/* Header */}
-        <header className="mb-12 animate-fade-in">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/')}
-              className="gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Products
-            </Button>
-            <div className="glass-panel px-4 py-2 rounded-full">
-              <span className="text-sm font-medium">3D Product View</span>
-            </div>
-          </div>
-        </header>
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
+          className="mb-6 gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Products
+        </Button>
 
         {/* Product Showcase Grid */}
         <div className="grid lg:grid-cols-2 gap-8 items-start">
@@ -125,6 +156,7 @@ const ProductDetail = () => {
                 <Button 
                   size="lg" 
                   className="flex-1 relative group overflow-hidden"
+                  onClick={handleAddToCart}
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     <ShoppingCart className="w-5 h-5" />
@@ -133,11 +165,21 @@ const ProductDetail = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Button>
                 
-                <Button size="lg" variant="outline" className="group">
-                  <Heart className="w-5 h-5 group-hover:fill-current transition-all" />
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="group"
+                  onClick={handleWishlistToggle}
+                >
+                  <Heart className={`w-5 h-5 transition-all ${isWishlisted ? 'fill-current text-destructive' : ''}`} />
                 </Button>
                 
-                <Button size="lg" variant="outline" className="group">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="group"
+                  onClick={handleShare}
+                >
                   <Share2 className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                 </Button>
               </div>
