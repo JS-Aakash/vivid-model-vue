@@ -27,6 +27,7 @@ export const products: Product[] = [
     image: '/placeholder.svg',
     badge: 'New Release',
     category: 'Footwear',
+    modelPath: '/models/black_sneakers.glb',
     features: [
       'Advanced cushioning technology',
       'Breathable mesh upper',
