@@ -5,9 +5,10 @@ import { ProductViewer3D } from '@/components/ProductViewer3D';
 import { ColorPicker } from '@/components/ColorPicker';
 import { ModelUploader } from '@/components/ModelUploader';
 import { Particles } from '@/components/Particles';
+import { ARViewer } from '@/components/ARViewer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ShoppingCart, Heart, Share2, ArrowLeft, Star, ChevronDown, ChevronUp, Eye } from 'lucide-react';
+import { ShoppingCart, Heart, Share2, ArrowLeft, Star, ChevronDown, ChevronUp, Eye, Scan } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { products } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
@@ -26,6 +27,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
   const [customModelUrl, setCustomModelUrl] = useState<string | undefined>(product?.modelPath);
+  const [showARViewer, setShowARViewer] = useState(false);
 
   const handleModelUpload = (file: File) => {
     const url = URL.createObjectURL(file);
@@ -80,6 +82,13 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      {showARViewer && (
+        <ARViewer
+          modelPath={customModelUrl || product.modelPath}
+          productName={product.name}
+          onClose={() => setShowARViewer(false)}
+        />
+      )}
       <Particles />
       
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -109,6 +118,14 @@ const ProductDetail = () => {
                 background: 'radial-gradient(circle at 50% 50%, hsl(var(--card)) 0%, hsl(var(--background)) 100%)'
               }}
             >
+              <Button
+                onClick={() => setShowARViewer(true)}
+                className="absolute top-4 right-4 z-10 gap-2 bg-primary/90 backdrop-blur-sm hover:bg-primary"
+                size="sm"
+              >
+                <Scan className="w-4 h-4" />
+                View in AR
+              </Button>
               <ProductViewer3D color={selectedColor} modelPath={customModelUrl} />
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-panel px-4 py-2 rounded-full text-sm text-muted-foreground animate-float">
                 Drag to rotate • Scroll to zoom
