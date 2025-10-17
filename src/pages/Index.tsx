@@ -38,9 +38,9 @@ const Index = () => {
         {/* Header */}
         <header className="mb-12 text-center animate-fade-in">
           <h1 className="text-5xl md:text-7xl font-bold text-gradient mb-4">
-            3D Product Store
+            SpinShop 360
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+          <p className="text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
             Explore our collection in stunning 3D. Click any product to customize and view in detail.
           </p>
           

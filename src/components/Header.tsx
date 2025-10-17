@@ -31,26 +31,27 @@ export const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center glow-primary">
-              <ShoppingBag className="w-5 h-5 text-white" />
+              <img src="/favicon.png" alt="3D Store Favicon" className="w-9 h-7" />
             </div>
             <span className="text-2xl font-bold text-gradient hidden sm:inline">
-              3D Store
+              SpinShop 360
             </span>
           </Link>
 
+
           {/* Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             {user ? (
               <>
                 <Button
                   variant="ghost"
-                  size="icon"
                   onClick={() => navigate('/wishlist')}
-                  className="relative"
+                  className="relative flex items-center gap-2 px-4 py-2 text-base font-medium hover:bg-accent/20 focus:ring-2 focus:ring-primary"
                 >
                   <Heart className="w-5 h-5" />
+                  <span>Wishlist</span>
                   {wishlistItems.length > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                    <Badge className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs font-bold bg-primary text-white">
                       {wishlistItems.length}
                     </Badge>
                   )}
@@ -58,13 +59,13 @@ export const Header = () => {
 
                 <Button
                   variant="ghost"
-                  size="icon"
                   onClick={() => navigate('/cart')}
-                  className="relative"
+                  className="relative flex items-center gap-2 px-4 py-2 text-base font-medium hover:bg-accent/20 focus:ring-2 focus:ring-primary"
                 >
                   <ShoppingCart className="w-5 h-5" />
+                  <span>Cart</span>
                   {cartItems.length > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                    <Badge className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs font-bold bg-primary text-white">
                       {cartItems.length}
                     </Badge>
                   )}
@@ -72,8 +73,12 @@ export const Header = () => {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-2 px-4 py-2 text-base font-medium hover:bg-accent/20 focus:ring-2 focus:ring-primary"
+                    >
                       <User className="w-5 h-5" />
+                      <span>Account</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="glass-panel">
@@ -89,9 +94,12 @@ export const Header = () => {
                 </DropdownMenu>
               </>
             ) : (
-              <Button onClick={() => navigate('/auth')} className="gap-2">
-                <User className="w-4 h-4" />
-                Sign In
+              <Button
+                onClick={() => navigate('/auth')}
+                className="flex items-center gap-2 px-4 py-2 text-base font-medium hover:bg-accent/20 focus:ring-2 focus:ring-primary"
+              >
+                <User className="w-5 h-5" />
+                <span>Sign In</span>
               </Button>
             )}
           </div>
